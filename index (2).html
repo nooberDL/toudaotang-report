@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>头道汤 · 培训报告</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:linear-gradient(180deg,#fdf6ee 0%,#f8f4ef 100%);color:#1e293b;min-height:100vh;padding-bottom:32px}
+.header{background:linear-gradient(135deg,#8B6914 0%,#C4973B 50%,#A67C28 100%);color:#fff;padding:28px 20px 36px;text-align:center;position:relative;overflow:hidden;max-width:560px;margin:16px auto 0;border-radius:16px}
+.header::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08)}
+.header::after{content:'';position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05)}
+.header .brand{font-size:13px;opacity:.8;letter-spacing:3px;margin-bottom:4px}
+.header h1{font-size:22px;font-weight:700;margin:8px 0}
+.header .meta{font-size:13px;opacity:.7;display:flex;align-items:center;justify-content:center;gap:6px}
+.container{max-width:560px;margin:0 auto;padding:0 16px}
+.card{background:#fff;border-radius:16px;padding:24px 20px;margin-top:16px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card:first-child{margin-top:16px;box-shadow:0 4px 24px rgba(139,105,20,.08)}
+.card h2{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:#1e293b}
+.card h2 .icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+
+/* Score Circle */
+.score-circle{text-align:center;padding:8px 0}
+.score-circle svg{transform:rotate(-90deg)}
+.score-circle .value{font-size:36px;font-weight:800}
+.score-circle .label{font-size:14px;color:#64748b;margin-top:4px}
+.score-diff{display:inline-flex;align-items:center;gap:2px;font-size:13px;font-weight:600;margin-left:8px;padding:2px 8px;border-radius:12px}
+.score-diff.up{color:#10b981;background:#10b98118}
+.score-diff.down{color:#ef4444;background:#ef444418}
+.score-diff.same{color:#94a3b8;background:#94a3b818}
+
+/* Radar */
+.radar-wrap{display:flex;justify-content:center;margin:8px 0 16px}
+.radar-wrap svg text{font-size:11px;fill:#64748b}
+.dim-grid{display:flex;flex-wrap:wrap;gap:8px}
+.dim-item{flex:1 1 45%;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#fafaf8;border-radius:10px;font-size:13px}
+.dim-item .name{color:#64748b}
+.dim-item .val{font-weight:700}
+.dim-item .val.high{color:#10b981}
+.dim-item .val.mid{color:#f59e0b}
+.dim-item .val.low{color:#ef4444}
+
+/* Question List */
+.q-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#fafaf8;border-radius:10px;margin-bottom:8px;border-left:3px solid #e2e8f0}
+.q-item.s10{border-left-color:#10b981}
+.q-item.s07{border-left-color:#f59e0b}
+.q-item.s03{border-left-color:#f97316}
+.q-item.s00{border-left-color:#ef4444}
+.q-num{width:24px;height:24px;border-radius:50%;background:#8B6914;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:10px;flex-shrink:0}
+.q-label{font-size:14px;color:#334155;flex:1}
+.q-badge{padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.q-badge.s10{background:#10b98120;color:#10b981;border:1px solid #10b98140}
+.q-badge.s07{background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40}
+.q-badge.s03{background:#f9731820;color:#f97316;border:1px solid #f9731640}
+.q-badge.s00{background:#ef444420;color:#ef4444;border:1px solid #ef444440}
+
+/* Strengths & Weaknesses */
+.sw-grid{display:flex;gap:12px}
+.sw-box{flex:1;border-radius:16px;padding:16px}
+.sw-box.good{background:#f0fdf4}
+.sw-box.bad{background:#fef2f2}
+.sw-box h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.sw-box.good h3{color:#166534}
+.sw-box.bad h3{color:#991b1b}
+.sw-box li{font-size:13px;line-height:1.6;list-style:none;padding:2px 0}
+.sw-box.good li{color:#15803d}
+.sw-box.bad li{color:#dc2626}
+
+/* Suggestions */
+.sug-item{padding:12px 14px;background:#fffbf0;border-radius:12px;margin-bottom:10px;border-left:3px solid #C4973B}
+.sug-item .sug-title{font-size:13px;font-weight:700;color:#8B6914;margin-bottom:4px}
+.sug-item .sug-text{font-size:13px;color:#44403c;line-height:1.6}
+
+/* Trend Chart */
+.trend-chart{position:relative;height:180px;margin:8px 0}
+.trend-chart canvas{width:100%!important;height:100%!important}
+
+/* History */
+.hist-item{margin-bottom:8px}
+.hist-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;cursor:pointer;transition:background .2s}
+.hist-header:hover{background:#f8f4ef}
+.hist-header.current{background:#fffbf0;border:1px solid rgba(196,151,59,.25)}
+.hist-header .round-info .title{font-size:14px;font-weight:600}
+.hist-header .round-info .date{font-size:12px;color:#94a3b8;margin-top:2px}
+.hist-header .round-score{display:flex;align-items:center;gap:6px}
+.hist-header .round-score .num{font-size:20px;font-weight:800}
+.hist-header .round-score .num.high{color:#10b981}
+.hist-header .round-score .num.mid{color:#f59e0b}
+.hist-header .round-score .num.low{color:#ef4444}
+.hist-header .arrow{font-size:12px;color:#94a3b8;transition:transform .2s}
+.hist-header.open .arrow{transform:rotate(180deg)}
+.hist-detail{display:none;padding:12px 14px;background:#fafaf8;border-radius:0 0 12px 12px;margin-top:-4px}
+.hist-detail.open{display:block}
+.hist-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.hist-tag{font-size:12px;padding:3px 8px;background:#fff;border-radius:6px;color:#64748b}
+.hist-tag b{color:#1e293b}
+.hist-note{font-size:12px;margin-bottom:2px}
+.hist-note.good{color:#15803d}
+.hist-note.bad{color:#dc2626}
+.cur-badge{font-size:11px;color:#8B6914;background:rgba(196,151,59,.13);padding:1px 6px;border-radius:4px;margin-left:6px}
+
+.footer{text-align:center;padding:24px 0 8px;color:#94a3b8;font-size:12px}
+
+/* Error */
+.error-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:40px 20px;text-align:center}
+.error-page .emoji{font-size:64px;margin-bottom:16px}
+.error-page h2{font-size:20px;color:#1e293b;margin-bottom:8px}
+.error-page p{font-size:14px;color:#64748b;line-height:1.6}
+
+@media(max-width:400px){
+  .sw-grid{flex-direction:column}
+  .dim-item{flex:1 1 100%}
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+// ========== 数据解码 ==========
+function getReportData() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get('d');
+    if (!encoded) return null;
+    
+    // base64 → binary → pako inflate → JSON
+    const binary = atob(encoded.replace(/-/g,'+').replace(/_/g,'/'));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    
+    // Try pako decompress, fallback to raw JSON
+    let jsonStr;
+    try {
+      jsonStr = pako.inflate(bytes, { to: 'string' });
+    } catch(e) {
+      // Maybe it's not compressed, try direct decode
+      jsonStr = decodeURIComponent(encoded);
+    }
+    return JSON.parse(jsonStr);
+  } catch(e) {
+    console.error('Data decode error:', e);
+    return null;
+  }
+}
+
+// ========== Pako (deflate/inflate) 精简内嵌 ==========
+// 使用轻量方案：不内嵌pako，改用 DecompressionStream API (现代浏览器支持)
+// 如果浏览器不支持，回退到 raw base64 JSON
+
+async function decodeData() {
+  const params = new URLSearchParams(window.location.search);
+  
+  // 方案1: ?d= gzip+base64
+  const dParam = params.get('d');
+  if (dParam) {
+    try {
+      const binary = atob(dParam.replace(/-/g,'+').replace(/_/g,'/'));
+      const bytes = new Uint8Array(binary.length);
+      for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+      
+      // 尝试用 DecompressionStream 解压
+      if (typeof DecompressionStream !== 'undefined') {
+        const ds = new DecompressionStream('gzip');
+        const writer = ds.writable.getWriter();
+        writer.write(bytes);
+        writer.close();
+        const reader = ds.readable.getReader();
+        const chunks = [];
+        while(true) {
+          const {done, value} = await reader.read();
+          if(done) break;
+          chunks.push(value);
+        }
+        const totalLen = chunks.reduce((a,c)=>a+c.length,0);
+        const result = new Uint8Array(totalLen);
+        let offset = 0;
+        for(const c of chunks){result.set(c,offset);offset+=c.length;}
+        const jsonStr = new TextDecoder().decode(result);
+        return JSON.parse(jsonStr);
+      }
+    } catch(e) { console.warn('gzip decode failed, trying raw:', e); }
+  }
+  
+  // 方案2: ?r= raw base64 JSON (无压缩，兼容性更好)
+  const rParam = params.get('r');
+  if (rParam) {
+    try {
+      const jsonStr = decodeURIComponent(atob(rParam.replace(/-/g,'+').replace(/_/g,'/')));
+      return JSON.parse(jsonStr);
+    } catch(e) { console.warn('raw decode failed:', e); }
+  }
+
+  // 方案3: ?j= URL编码的JSON (最简单的fallback)
+  const jParam = params.get('j');
+  if (jParam) {
+    try {
+      return JSON.parse(decodeURIComponent(jParam));
+    } catch(e) { console.warn('json decode failed:', e); }
+  }
+
+  return null;
+}
+
+// ========== 渲染逻辑 ==========
+const DIM_LABELS = {
+  D1:'使命',D2:'愿景',D3:'价值观',D4:'品牌介绍',D5:'三道汤',
+  D6:'接待流程',D7:'检测维度',D8:'检测话术',D9:'引火归元',
+  D10:'蜂养减痛',D11:'护理后注意',D12:'创始人',D13:'回访/销售'
+};
+
+const SCORE_MAP = {
+  '1':   {label:'完美',cls:'s10'},
+  '0.7': {label:'良好',cls:'s07'},
+  '0.3': {label:'部分正确',cls:'s03'},
+  '0':   {label:'未掌握',cls:'s00'}
+};
+
+function getScoreInfo(s) {
+  const key = String(s);
+  return SCORE_MAP[key] || SCORE_MAP['0'];
+}
+
+function getScoreColor(score, full) {
+  const pct = score / full;
+  if (pct >= 0.8) return '#10b981';
+  if (pct >= 0.6) return '#f59e0b';
+  if (pct >= 0.4) return '#f97316';
+  return '#ef4444';
+}
+
+function getScoreClass(score, full) {
+  const pct = score / full;
+  if (pct >= 0.7) return 'high';
+  if (pct >= 0.5) return 'mid';
+  return 'low';
+}
+
+// SVG 雷达图
+function renderRadar(breakdown, breakdownFull) {
+  const dims = Object.keys(breakdown);
+  const n = dims.length;
+  const cx = 140, cy = 130, R = 90;
+  const angleStep = (2 * Math.PI) / n;
+  
+  function polar(i, r) {
+    const a = angleStep * i - Math.PI / 2;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  }
+  
+  // Grid circles
+  let gridLines = '';
+  [0.25, 0.5, 0.75, 1].forEach(pct => {
+    const r = R * pct;
+    let pts = [];
+    for(let i=0;i<n;i++) pts.push(polar(i, r).join(','));
+    gridLines += `<polygon points="${pts.join(' ')}" fill="none" stroke="#e2e8f0" stroke-width="1"/>`;
+  });
+  
+  // Axis lines
+  let axisLines = '';
+  for(let i=0;i<n;i++){
+    const [x,y] = polar(i, R);
+    axisLines += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e2e8f0" stroke-width="1"/>`;
+  }
+  
+  // Labels
+  let labels = '';
+  for(let i=0;i<n;i++){
+    const [x,y] = polar(i, R + 22);
+    const anchor = x < cx - 10 ? 'end' : x > cx + 10 ? 'start' : 'middle';
+    labels += `<text x="${x}" y="${y}" text-anchor="${anchor}" dominant-baseline="middle" font-size="12" fill="#64748b">${dims[i]}</text>`;
+  }
+  
+  // Score polygon
+  let scorePts = [];
+  for(let i=0;i<n;i++){
+    const maxVal = breakdownFull[dims[i]] || 3;
+    const val = breakdown[dims[i]] || 0;
+    const r = R * (val / maxVal);
+    scorePts.push(polar(i, r).join(','));
+  }
+  
+  // Full polygon (dashed)
+  let fullPts = [];
+  for(let i=0;i<n;i++) fullPts.push(polar(i, R).join(','));
+  
+  return `<svg viewBox="0 0 280 260" width="280" height="260" xmlns="http://www.w3.org/2000/svg">
+    ${gridLines}${axisLines}
+    <polygon points="${fullPts.join(' ')}" fill="none" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+    <polygon points="${scorePts.join(' ')}" fill="rgba(196,151,59,0.2)" stroke="#8B6914" stroke-width="2"/>
+    ${scorePts.map((p,i) => `<circle cx="${p.split(',')[0]}" cy="${p.split(',')[1]}" r="4" fill="#8B6914"/>`).join('')}
+    ${labels}
+  </svg>`;
+}
+
+// 趋势折线图 (纯SVG)
+function renderTrend(history) {
+  if (history.length < 2) return '';
+  
+  const W = 500, H = 180, padL = 40, padR = 20, padT = 20, padB = 36;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const n = history.length;
+  const stepX = chartW / (n - 1);
+  
+  let gridLines = '';
+  for(let v = 0; v <= 10; v += 2) {
+    const y = padT + chartH - (v / 10) * chartH;
+    gridLines += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#f1f5f9" stroke-width="1"/>`;
+    gridLines += `<text x="${padL-8}" y="${y+4}" text-anchor="end" font-size="11" fill="#94a3b8">${v}</text>`;
+  }
+  
+  let points = [];
+  let labels = '';
+  history.forEach((h, i) => {
+    const x = padL + i * stepX;
+    const y = padT + chartH - (h.totalScore / 10) * chartH;
+    points.push(`${x},${y}`);
+    const dateLabel = '第' + h.round + '轮';
+    labels += `<text x="${x}" y="${H-8}" text-anchor="middle" font-size="11" fill="#64748b">${dateLabel}</text>`;
+  });
+  
+  const polyline = `<polyline points="${points.join(' ')}" fill="none" stroke="#8B6914" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const dots = points.map((p,i) => {
+    const [x,y] = p.split(',');
+    return `<circle cx="${x}" cy="${y}" r="5" fill="#8B6914" stroke="#fff" stroke-width="2"/>
+            <text x="${x}" y="${y-12}" text-anchor="middle" font-size="11" font-weight="700" fill="#8B6914">${history[i].totalScore}</text>`;
+  }).join('');
+  
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width:${W}px">
+    ${gridLines}${polyline}${dots}${labels}
+  </svg>`;
+}
+
+function renderReport(data) {
+  const cur = data.currentRound;
+  const history = data.history || [];
+  const name = data.userName || '学员';
+  
+  const breakdownFull = {'企业文化':2,'品牌与项目':3,'接待流程':2,'检测话术':2,'职业素养':1};
+  
+  // Score diff
+  const prevRound = history.length >= 2 ? history[history.length - 2] : null;
+  const scoreDiff = prevRound ? (cur.totalScore - prevRound.totalScore).toFixed(1) : null;
+  let diffHtml = '';
+  if (scoreDiff !== null) {
+    const cls = scoreDiff > 0 ? 'up' : scoreDiff < 0 ? 'down' : 'same';
+    const arrow = scoreDiff > 0 ? '↑' : scoreDiff < 0 ? '↓' : '→';
+    diffHtml = `<span class="score-diff ${cls}">${arrow} ${scoreDiff > 0 ? '+' : ''}${scoreDiff}</span>`;
+  }
+  
+  // Score color
+  const scoreColor = getScoreColor(cur.totalScore, 10);
+  const pct = Math.round((cur.totalScore / 10) * 100);
+  const r = 54;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct / 100);
+  
+  // Questions
+  const questions = Object.entries(cur.questionScores || {}).map(([k,v],i) => {
+    const info = getScoreInfo(v);
+    return `<div class="q-item ${info.cls}">
+      <span class="q-num">${i+1}</span>
+      <span class="q-label">${k} ${DIM_LABELS[k]||k}</span>
+      <span class="q-badge ${info.cls}">${v}分 · ${info.label}</span>
+    </div>`;
+  }).join('');
+  
+  // Breakdown dims
+  const dimItems = Object.entries(cur.breakdown || {}).map(([k,v]) => {
+    const full = breakdownFull[k] || 3;
+    const cls = getScoreClass(v, full);
+    return `<div class="dim-item"><span class="name">${k}</span><span class="val ${cls}">${v} / ${full}</span></div>`;
+  }).join('');
+  
+  // Radar
+  const radarSvg = renderRadar(cur.breakdown || {}, breakdownFull);
+  
+  // Strengths & Weaknesses
+  const strengthsHtml = (cur.strengths||[]).map(s => `<li>✅ ${s}</li>`).join('');
+  const weaknessesHtml = (cur.weaknesses||[]).map(w => `<li>⚠️ ${w}</li>`).join('');
+  
+  // Suggestions
+  const sugHtml = Object.entries(cur.suggestions || {}).map(([k,v]) => 
+    `<div class="sug-item"><div class="sug-title">${k}</div><div class="sug-text">${v}</div></div>`
+  ).join('');
+  
+  // Trend
+  const trendSvg = renderTrend(history);
+  
+  // History
+  const histHtml = [...history].reverse().map(h => {
+    const isCur = h.round === cur.round;
+    const cls = getScoreClass(h.totalScore, 10);
+    const tags = Object.entries(h.breakdown||{}).map(([k,v]) => `<span class="hist-tag">${k} <b>${v}</b></span>`).join('');
+    const sHtml = (h.strengths||[]).map(s => `<div class="hist-note good">✅ ${s}</div>`).join('');
+    const wHtml = (h.weaknesses||[]).map(w => `<div class="hist-note bad">⚠️ ${w}</div>`).join('');
+    
+    return `<div class="hist-item">
+      <div class="hist-header ${isCur?'current':''}" onclick="toggleHist(this)">
+        <div class="round-info">
+          <div class="title">第${h.round}轮${isCur?'<span class=cur-badge>本轮</span>':''}</div>
+          <div class="date">${h.date||''}</div>
+        </div>
+        <div class="round-score">
+          <span class="num ${cls}">${h.totalScore}</span>
+          <span style="font-size:12px;color:#94a3b8">/ 10</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="hist-detail">
+        <div class="hist-tags">${tags}</div>
+        ${sHtml}${wHtml}
+      </div>
+    </div>`;
+  }).join('');
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">
+      <div class="brand">头道汤 · 新员工培训</div>
+      <h1>${name}的培训报告</h1>
+      <div class="meta">🕐 第${cur.round}轮 · ${cur.date||''}</div>
+    </div>
+    <div class="container">
+      <!-- 综合得分 -->
+      <div class="card">
+        <div class="score-circle">
+          <svg width="130" height="130">
+            <circle cx="65" cy="65" r="${r}" fill="none" stroke="#f1f5f9" stroke-width="10"/>
+            <circle cx="65" cy="65" r="${r}" fill="none" stroke="${scoreColor}" stroke-width="10"
+              stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round"
+              style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1s ease"/>
+          </svg>
+          <div style="margin-top:-85px;margin-bottom:40px">
+            <span class="value" style="color:${scoreColor}">${cur.totalScore}</span>
+            <span style="font-size:14px;color:#94a3b8">/ 10</span>
+          </div>
+          <div class="label">综合得分 ${diffHtml}</div>
+        </div>
+      </div>
+      
+      <!-- 五维雷达 -->
+      <div class="card">
+        <h2><span class="icon" style="background:#8B691412">🎯</span> 五维能力分析</h2>
+        <div class="radar-wrap">${radarSvg}</div>
+        <div class="dim-grid">${dimItems}</div>
+      </div>
+      
+      <!-- 逐题得分 -->
+      <div class="card">
+        <h2><span class="icon" style="background:#8B691412">📖</span> 逐题得分</h2>
+        ${questions}
+      </div>
+      
+      <!-- 优劣势 -->
+      <div class="card" style="background:transparent;box-shadow:none;padding:0">
+        <div class="sw-grid">
+          <div class="sw-box good"><h3>✅ 掌握较好</h3><ul>${strengthsHtml}</ul></div>
+          <div class="sw-box bad"><h3>⚠️ 需要加强</h3><ul>${weaknessesHtml}</ul></div>
+        </div>
+      </div>
+      
+      <!-- 建议 -->
+      <div class="card">
+        <h2><span class="icon" style="background:#8B691412">💬</span> 针对性建议</h2>
+        ${sugHtml}
+      </div>
+      
+      <!-- 趋势 -->
+      ${history.length >= 2 ? `<div class="card">
+        <h2><span class="icon" style="background:#8B691412">📈</span> 成长趋势</h2>
+        <div style="overflow-x:auto">${trendSvg}</div>
+      </div>` : ''}
+      
+      <!-- 历史 -->
+      ${history.length > 0 ? `<div class="card">
+        <h2><span class="icon" style="background:#8B691412">🏆</span> 历史记录</h2>
+        ${histHtml}
+      </div>` : ''}
+      
+      <div class="footer">头道汤 · 解决全人类头部亚健康问题</div>
+    </div>
+  `;
+}
+
+function renderError() {
+  document.getElementById('app').innerHTML = `
+    <div class="error-page">
+      <div class="emoji">📋</div>
+      <h2>暂无报告数据</h2>
+      <p>请通过培训智能体完成答题后<br>点击生成的链接查看报告</p>
+    </div>
+  `;
+}
+
+function toggleHist(el) {
+  el.classList.toggle('open');
+  const detail = el.nextElementSibling;
+  detail.classList.toggle('open');
+}
+
+// ========== 启动 ==========
+(async function() {
+  const data = await decodeData();
+  if (data) {
+    renderReport(data);
+  } else {
+    // 演示模式：无参数时显示示例数据
+    const demo = {
+      userName: "小王",
+      currentRound: {
+        round: 3, date: "2025-07-15 14:30", totalScore: 7.2,
+        questionScores: {D1:1.0,D3:0.7,D5:1.0,D6:0.7,D7:0.3,D8:0.7,D9:1.0,D10:0.7,D11:1.0,D13:0.3},
+        breakdown: {"企业文化":1.7,"品牌与项目":2.7,"接待流程":1.7,"检测话术":1.0,"职业素养":0.3},
+        strengths: ["企业使命和三道汤知识掌握扎实","引火归元项目理解到位","护理后注意事项记忆准确"],
+        weaknesses: ["检测维度记忆不完整，遗漏了毛囊口情况","回访场景话术缺乏情绪价值表达"],
+        suggestions: {
+          "话术表达": "回访时多用共情句式，如『姐，上次做完感觉怎么样呀？』而非直接推销",
+          "专业度": "检测七维度建议编成口诀记忆：弹粗油水角密毛，确保一个不漏",
+          "情绪价值": "在沟通中加入肯定和鼓励，比如『您的头皮弹性很好，说明平时保养得不错』"
+        }
+      },
+      history: [
+        {round:1,date:"2025-07-10 10:00",totalScore:4.5,breakdown:{"企业文化":0.7,"品牌与项目":1.7,"接待流程":1.0,"检测话术":0.7,"职业素养":0.3},strengths:["三道汤基本概念了解"],weaknesses:["企业文化几乎空白"]},
+        {round:2,date:"2025-07-12 15:20",totalScore:5.8,breakdown:{"企业文化":1.4,"品牌与项目":2.0,"接待流程":1.0,"检测话术":1.0,"职业素养":0.3},strengths:["企业文化有明显进步"],weaknesses:["接待流程细节不足"]},
+        {round:3,date:"2025-07-15 14:30",totalScore:7.2,breakdown:{"企业文化":1.7,"品牌与项目":2.7,"接待流程":1.7,"检测话术":1.0,"职业素养":0.3},strengths:["企业使命和三道汤知识掌握扎实"],weaknesses:["检测维度记忆不完整"]}
+      ]
+    };
+    renderReport(demo);
+  }
+})();
+</script>
+</body>
+</html>
